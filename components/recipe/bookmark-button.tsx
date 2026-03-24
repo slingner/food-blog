@@ -19,6 +19,11 @@ function saveBookmarks(set: Set<string>) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)));
 }
 
+const iconBtnClass = cn(
+  "inline-flex items-center justify-center size-9 rounded-full",
+  "transition-colors duration-[var(--transition-fast)]"
+);
+
 export function BookmarkButton({ slug }: { slug: string }) {
   const [saved, setSaved] = useState(false);
 
@@ -42,15 +47,15 @@ export function BookmarkButton({ slug }: { slug: string }) {
     <button
       onClick={toggle}
       className={cn(
-        "p-2 rounded-xl transition-all duration-[var(--transition-fast)]",
+        iconBtnClass,
         saved
-          ? "text-rose-500 hover:bg-rose-50"
-          : "text-[var(--color-text-muted)] hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-secondary)]"
+          ? "text-[var(--color-accent)]"
+          : "text-[var(--color-text-faint)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-raised)]"
       )}
       aria-label={saved ? "Remove bookmark" : "Bookmark recipe"}
       aria-pressed={saved}
     >
-      <Heart className={cn("size-5", saved && "fill-current")} />
+      <Heart className={cn("size-[18px]", saved && "fill-current")} strokeWidth={1.5} />
     </button>
   );
 }
@@ -60,14 +65,12 @@ export function PrintButton() {
     <button
       onClick={() => window.print()}
       className={cn(
-        "p-2 rounded-xl",
-        "text-[var(--color-text-muted)]",
-        "hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-secondary)]",
-        "transition-all duration-[var(--transition-fast)]"
+        iconBtnClass,
+        "text-[var(--color-text-faint)] hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-raised)]"
       )}
       aria-label="Print recipe"
     >
-      <Printer className="size-5" />
+      <Printer className="size-[18px]" strokeWidth={1.5} />
     </button>
   );
 }

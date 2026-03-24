@@ -3,14 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
-  Clock,
-  Flame,
-  Timer,
-  Users,
-  ChefHat,
   ArrowDown,
-  Printer,
-  Lightbulb,
 } from "lucide-react";
 
 import { cn, formatMinutes, formatDate } from "@/lib/utils";
@@ -23,6 +16,17 @@ import {
 import { StarRating } from "@/components/star-rating";
 import { Badge } from "@/components/ui/badge";
 import { RecipeJsonLd } from "@/components/recipe-json-ld";
+import {
+  RecipeInteractivePanel,
+  ServingCalculator,
+  UnitToggle,
+  IngredientList,
+  CookMode,
+  RecipeReviews,
+  ShareButtons,
+  BookmarkButton,
+  PrintButton,
+} from "@/components/recipe";
 
 /* ─── Static generation ─── */
 
@@ -70,6 +74,15 @@ export default async function RecipeDetailPage({
   /* Group ingredients by groupName */
   const ingredientGroups = groupIngredients(recipe.ingredients ?? []);
 
+  /* Build delicate meta line */
+  const metaParts: string[] = [];
+  if (totalTime > 0) metaParts.push(formatMinutes(totalTime));
+  if (recipe.servings) metaParts.push(`${recipe.servings} servings`);
+  if (recipe.difficulty)
+    metaParts.push(
+      recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1)
+    );
+
   return (
     <>
       <RecipeJsonLd recipe={recipe} />
@@ -77,8 +90,60 @@ export default async function RecipeDetailPage({
       {/* ─── Hero ─── */}
       <RecipeHero recipe={recipe} />
 
-      {/* ─── Time / Serving bar ─── */}
-      <TimeServingBar recipe={recipe} totalTime={totalTime} />
+      {/* ─── Title & meta below image ─── */}
+      <header
+        className="mx-auto px-[var(--space-lg)] pt-[var(--space-3xl)]"
+        style={{ maxWidth: "var(--container-prose)" }}
+      >
+        {/* Breadcrumb */}
+        {recipe.category && (
+          <nav aria-label="Breadcrumb" className="mb-[var(--space-md)]">
+            <ol className="flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]" style={{ color: "var(--color-text-muted)" }}>
+              <li>
+                <Link
+                  href="/recipes"
+                  className="transition-colors hover:text-[var(--color-accent)]"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  Recipes
+                </Link>
+              </li>
+              <li style={{ color: "var(--color-text-faint)" }}>/</li>
+              <li>
+                <Link
+                  href={`/category/${recipe.category.slug}`}
+                  className="transition-colors hover:text-[var(--color-accent)]"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  {recipe.category.name}
+                </Link>
+              </li>
+            </ol>
+          </nav>
+        )}
+
+        <h1
+          className="font-display text-[var(--text-4xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] md:text-[var(--text-5xl)]"
+          style={{ color: "var(--color-text)" }}
+        >
+          {recipe.title}
+        </h1>
+
+        {/* Delicate inline meta */}
+        <p
+          className="mt-[var(--space-md)] text-[var(--text-sm)] tracking-[var(--tracking-wide)]"
+          style={{ color: "var(--color-text-muted)" }}
+        >
+          {metaParts.join(" \u00B7 ")}
+        </p>
+
+        <p
+          className="mt-[var(--space-xs)] text-[var(--text-sm)]"
+          style={{ color: "var(--color-text-faint)" }}
+        >
+          {formatDate(recipe.createdAt)}
+        </p>
+      </header>
 
       {/* ─── Jump to Recipe (sticky mobile) ─── */}
       <JumpToRecipe />
@@ -103,200 +168,123 @@ export default async function RecipeDetailPage({
         </section>
       )}
 
-      {/* ─── Recipe Card ─── */}
+      {/* ─── Section divider ─── */}
+      <div className="divider" />
+
+      {/* ─── Recipe Content ─── */}
       <section
         id="recipe"
-        className="mx-auto px-[var(--space-lg)] pb-[var(--space-4xl)]"
+        className="mx-auto px-[var(--space-lg)] pb-[var(--space-4xl)] pt-[var(--space-xl)]"
         style={{ maxWidth: "var(--container-prose)" }}
       >
-        <div
-          className="rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-[var(--space-2xl)] shadow-[var(--shadow-md)]"
+        {/* Card header */}
+        <h2
+          className="font-display text-[var(--text-3xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] text-[var(--color-text)]"
         >
-          {/* Card header */}
-          <h2
-            className="font-display text-[var(--text-3xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] text-[var(--color-text)]"
-          >
-            {recipe.title}
-          </h2>
-          {recipe.description && (
-            <p className="mt-[var(--space-sm)] text-[var(--text-base)] text-[var(--color-text-muted)]">
-              {recipe.description}
-            </p>
-          )}
+          {recipe.title}
+        </h2>
+        {recipe.description && (
+          <p className="mt-[var(--space-sm)] text-[var(--text-base)] leading-[var(--leading-relaxed)] text-[var(--color-text-muted)]">
+            {recipe.description}
+          </p>
+        )}
 
-          {/* Stream D placeholders */}
-          <div className="mt-[var(--space-xl)] flex flex-wrap items-center gap-[var(--space-md)]">
-            {/* ServingCalculator placeholder */}
-            <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] text-[var(--color-text-faint)]">
-              ServingCalculator placeholder
-            </div>
-            {/* UnitToggle placeholder */}
-            <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] text-[var(--color-text-faint)]">
-              UnitToggle placeholder
-            </div>
-          </div>
-
+        <RecipeInteractivePanel baseServings={recipe.servings}>
           {/* ─── Ingredients ─── */}
-          <div className="mt-[var(--space-2xl)]">
+          <div className="mt-[var(--space-3xl)]">
             <h3
               className="font-display text-[var(--text-2xl)] leading-[var(--leading-tight)] text-[var(--color-text)]"
             >
               Ingredients
             </h3>
 
-            {/* IngredientList interactive placeholder */}
-            <div className="mt-[var(--space-sm)] rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] text-[var(--color-text-faint)]">
-              IngredientList interactive placeholder
+            {/* Compact controls row */}
+            <div className="mt-[var(--space-md)] flex flex-wrap items-center gap-[var(--space-md)]">
+              <UnitToggle />
+              <ServingCalculator />
             </div>
 
-            <div className="mt-[var(--space-lg)] space-y-[var(--space-xl)]">
-              {ingredientGroups.map(({ groupName, items }) => (
-                <div key={groupName ?? "__default"}>
-                  {groupName && (
-                    <h4
-                      className="mb-[var(--space-sm)] font-display text-[var(--text-lg)] italic text-[var(--color-text-secondary)]"
-                    >
-                      {groupName}
-                    </h4>
-                  )}
-                  <ul className="space-y-[var(--space-sm)]">
-                    {items.map((ing) => (
-                      <li key={ing.id} className="flex items-start gap-[var(--space-sm)]">
-                        {/* Checkbox style */}
-                        <span
-                          className="mt-[3px] flex size-[18px] shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border)]"
-                          aria-hidden="true"
-                        />
-                        <span className="text-[var(--text-base)] leading-[var(--leading-normal)] text-[var(--color-text-secondary)]">
-                          {ing.quantity != null && (
-                            <span className="font-medium text-[var(--color-text)]">
-                              {formatQuantity(ing.quantity)}{" "}
-                            </span>
-                          )}
-                          {ing.unitUs && (
-                            <span className="text-[var(--color-text)]">
-                              {ing.unitUs}{" "}
-                            </span>
-                          )}
-                          <span>{ing.name}</span>
-                          {ing.note && (
-                            <span className="text-[var(--color-text-muted)]">
-                              {" "}
-                              ({ing.note})
-                            </span>
-                          )}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <IngredientList ingredients={recipe.ingredients ?? []} />
           </div>
+        </RecipeInteractivePanel>
 
-          {/* ─── Steps ─── */}
-          {recipe.steps && recipe.steps.length > 0 && (
-            <div className="mt-[var(--space-2xl)]">
-              <h3
-                className="font-display text-[var(--text-2xl)] leading-[var(--leading-tight)] text-[var(--color-text)]"
-              >
-                Instructions
-              </h3>
-              <ol className="mt-[var(--space-lg)] space-y-[var(--space-2xl)]">
-                {recipe.steps.map((step) => (
-                  <li key={step.id} className="flex gap-[var(--space-lg)]">
-                    {/* Step number circle */}
-                    <span
-                      className="flex size-9 shrink-0 items-center justify-center rounded-full font-display text-[var(--text-base)] font-semibold"
-                      style={{
-                        backgroundColor: "var(--color-accent-light)",
-                        color: "var(--color-accent)",
-                      }}
-                    >
-                      {step.stepNumber}
-                    </span>
-                    <div className="flex-1 pt-[var(--space-xs)]">
-                      <p className="text-[var(--text-base)] leading-[var(--leading-relaxed)] text-[var(--color-text-secondary)]">
-                        {step.instruction}
+        {/* ─── Section divider ─── */}
+        <div className="divider" style={{ margin: "var(--space-3xl) auto" }} />
+
+        {/* ─── Steps ─── */}
+        {recipe.steps && recipe.steps.length > 0 && (
+          <div>
+            <h3
+              className="font-display text-[var(--text-2xl)] leading-[var(--leading-tight)] text-[var(--color-text)]"
+            >
+              Instructions
+            </h3>
+            <ol className="mt-[var(--space-xl)] space-y-[var(--space-3xl)]">
+              {recipe.steps.map((step) => (
+                <li key={step.id} className="flex gap-[var(--space-lg)]">
+                  {/* Step number — accent color, no circle */}
+                  <span
+                    className="shrink-0 font-display text-[var(--text-2xl)] font-semibold leading-[var(--leading-tight)]"
+                    style={{ color: "var(--color-accent)" }}
+                  >
+                    {step.stepNumber}.
+                  </span>
+                  <div className="flex-1 pt-[var(--space-xs)]">
+                    <p className="text-[var(--text-base)] leading-[var(--leading-relaxed)] text-[var(--color-text-secondary)]">
+                      {step.instruction}
+                    </p>
+                    {step.tip && (
+                      <p
+                        className="mt-[var(--space-md)] text-[var(--text-sm)] italic leading-[var(--leading-relaxed)]"
+                        style={{ color: "var(--color-text-muted)" }}
+                      >
+                        Tip: {step.tip}
                       </p>
-                      {step.tip && (
-                        <div
-                          className="mt-[var(--space-md)] flex gap-[var(--space-sm)] rounded-[var(--radius-md)] p-[var(--space-md)]"
-                          style={{
-                            backgroundColor: "var(--color-accent-light)",
-                            borderLeft: "3px solid var(--color-accent)",
-                          }}
-                        >
-                          <Lightbulb
-                            className="mt-0.5 size-4 shrink-0"
-                            style={{ color: "var(--color-accent)" }}
-                          />
-                          <p className="text-[var(--text-sm)] leading-[var(--leading-normal)] text-[var(--color-text-secondary)]">
-                            <span
-                              className="font-semibold"
-                              style={{ color: "var(--color-accent)" }}
-                            >
-                              Tip:{" "}
-                            </span>
-                            {step.tip}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-        </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
       </section>
 
-      {/* ─── After recipe card: action placeholders ─── */}
+      {/* ─── Section divider ─── */}
+      <div className="divider" />
+
+      {/* ─── After recipe: actions ─── */}
       <section
-        className="mx-auto px-[var(--space-lg)] pb-[var(--space-2xl)]"
+        className="mx-auto px-[var(--space-lg)] py-[var(--space-xl)]"
         style={{ maxWidth: "var(--container-prose)" }}
       >
-        <div className="flex flex-wrap items-center gap-[var(--space-md)]">
-          {/* CookMode placeholder */}
-          <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] text-[var(--color-text-faint)]">
-            CookMode placeholder
+        <div className="flex items-center justify-between">
+          <CookMode steps={recipe.steps ?? []} title={recipe.title} />
+          <div className="flex items-center gap-[var(--space-xs)]">
+            <ShareButtons
+              url={`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/recipes/${slug}`}
+              title={recipe.title}
+              description={recipe.description ?? undefined}
+              image={recipe.heroImage}
+            />
+            <BookmarkButton slug={slug} />
+            <PrintButton />
           </div>
-          {/* ShareButtons placeholder */}
-          <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] text-[var(--color-text-faint)]">
-            ShareButtons placeholder
-          </div>
-          {/* BookmarkButton placeholder */}
-          <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] text-[var(--color-text-faint)]">
-            BookmarkButton placeholder
-          </div>
-          {/* PrintButton */}
-          <Link
-            href={`/recipes/${slug}/print`}
-            className={cn(
-              "inline-flex items-center gap-[var(--space-sm)] rounded-[var(--radius-md)]",
-              "border border-[var(--color-border)] px-[var(--space-md)] py-[var(--space-sm)]",
-              "text-[var(--text-sm)] font-medium text-[var(--color-text-secondary)]",
-              "transition-[color,background-color] duration-[var(--transition-fast)]",
-              "hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text)]"
-            )}
-          >
-            <Printer className="size-4" />
-            Print
-          </Link>
         </div>
 
-        {/* RecipeReviews placeholder */}
-        <div className="mt-[var(--space-2xl)] rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-[var(--space-lg)] py-[var(--space-xl)] text-center text-[var(--text-sm)] text-[var(--color-text-faint)]">
-          RecipeReviews placeholder
+        {/* temporarily hidden
+        <div className="mt-[var(--space-2xl)]">
+          <RecipeReviews
+            recipeId={recipe.id}
+            reviews={[]}
+            stats={recipe.reviewStats ?? { averageRating: 0, totalReviews: 0 }}
+          />
         </div>
+        */}
 
         {/* ─── Tags ─── */}
         {recipe.tags && recipe.tags.length > 0 && (
-          <div className="mt-[var(--space-2xl)]">
-            <h3 className="text-[var(--text-sm)] font-semibold uppercase tracking-[var(--tracking-wide)] text-[var(--color-text-muted)]">
-              Tags
-            </h3>
-            <div className="mt-[var(--space-md)] flex flex-wrap gap-[var(--space-sm)]">
+          <div className="mt-[var(--space-2xl)] text-center">
+            <div className="flex flex-wrap justify-center gap-[var(--space-sm)]">
               {recipe.tags.map((tag) => (
                 <Link key={tag.id} href={`/tags/${tag.slug}`}>
                   <Badge variant="secondary">{tag.name}</Badge>
@@ -316,196 +304,26 @@ function RecipeHero({ recipe }: { recipe: Recipe }) {
   const placeholderColor =
     heroPlaceholderColors[recipe.id] ?? "#e8c4a0";
 
-  return (
-    <section className="relative">
-      {recipe.heroImage ? (
-        <div className="relative aspect-[16/9] max-h-[560px] w-full overflow-hidden">
-          <Image
-            src={recipe.heroImage}
-            alt={recipe.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 p-[var(--space-2xl)] md:p-[var(--space-4xl)]">
-            <HeroContent recipe={recipe} textColor="white" />
-          </div>
-        </div>
-      ) : (
-        <div
-          className="w-full px-[var(--space-lg)] pb-[var(--space-3xl)] pt-[var(--space-4xl)]"
-          style={{ backgroundColor: placeholderColor }}
-        >
-          <div className="mx-auto" style={{ maxWidth: "var(--container-prose)" }}>
-            <HeroContent
-              recipe={recipe}
-              textColor="white"
-            />
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
-function HeroContent({
-  recipe,
-  textColor,
-}: {
-  recipe: Recipe;
-  textColor: string;
-}) {
-  return (
-    <div>
-      {/* Breadcrumb */}
-      {recipe.category && (
-        <nav aria-label="Breadcrumb" className="mb-[var(--space-md)]">
-          <ol className="flex items-center gap-[var(--space-xs)] text-[var(--text-sm)]">
-            <li>
-              <Link
-                href="/recipes"
-                className="opacity-70 transition-opacity hover:opacity-100"
-                style={{ color: textColor }}
-              >
-                Recipes
-              </Link>
-            </li>
-            <li style={{ color: textColor }} className="opacity-50">
-              /
-            </li>
-            <li>
-              <Link
-                href={`/category/${recipe.category.slug}`}
-                className="opacity-70 transition-opacity hover:opacity-100"
-                style={{ color: textColor }}
-              >
-                {recipe.category.name}
-              </Link>
-            </li>
-          </ol>
-        </nav>
-      )}
-
-      {/* Title */}
-      <h1
-        className="font-display text-[var(--text-4xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] md:text-[var(--text-5xl)]"
-        style={{ color: textColor }}
-      >
-        {recipe.title}
-      </h1>
-
-      {/* Meta line */}
-      <div className="mt-[var(--space-lg)] flex flex-wrap items-center gap-[var(--space-md)]">
-        <span
-          className="text-[var(--text-sm)] font-medium"
-          style={{ color: textColor, opacity: 0.85 }}
-        >
-          The Hungry Fork Test Kitchen
-        </span>
-        <span style={{ color: textColor, opacity: 0.4 }}>|</span>
-        <span
-          className="text-[var(--text-sm)]"
-          style={{ color: textColor, opacity: 0.7 }}
-        >
-          {formatDate(recipe.createdAt)}
-        </span>
-        {recipe.reviewStats && recipe.reviewStats.totalReviews > 0 && (
-          <>
-            <span style={{ color: textColor, opacity: 0.4 }}>|</span>
-            <StarRating
-              rating={recipe.reviewStats.averageRating}
-              count={recipe.reviewStats.totalReviews}
-            />
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Time / Serving bar ─── */
-
-function TimeServingBar({
-  recipe,
-  totalTime,
-}: {
-  recipe: Recipe;
-  totalTime: number;
-}) {
-  const items: { icon: React.ReactNode; label: string; value: string }[] = [];
-
-  if (recipe.prepTime) {
-    items.push({
-      icon: <Clock className="size-[18px]" />,
-      label: "Prep",
-      value: formatMinutes(recipe.prepTime),
-    });
-  }
-  if (recipe.cookTime) {
-    items.push({
-      icon: <Flame className="size-[18px]" />,
-      label: "Cook",
-      value: formatMinutes(recipe.cookTime),
-    });
-  }
-  if (recipe.restTime) {
-    items.push({
-      icon: <Timer className="size-[18px]" />,
-      label: "Rest",
-      value: formatMinutes(recipe.restTime),
-    });
-  }
-  if (totalTime > 0) {
-    items.push({
-      icon: <Clock className="size-[18px]" />,
-      label: "Total",
-      value: formatMinutes(totalTime),
-    });
-  }
-  items.push({
-    icon: <Users className="size-[18px]" />,
-    label: "Servings",
-    value: String(recipe.servings),
-  });
-  if (recipe.difficulty) {
-    items.push({
-      icon: <ChefHat className="size-[18px]" />,
-      label: "Difficulty",
-      value: recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1),
-    });
+  if (!recipe.heroImage) {
+    return null;
   }
 
   return (
-    <div
-      className="border-y border-[var(--color-border)] bg-[var(--color-surface)]"
+    <section
+      className="mx-auto px-[var(--space-lg)] pt-[var(--space-2xl)]"
+      style={{ maxWidth: "var(--container-xl)" }}
     >
-      <div
-        className="mx-auto flex flex-wrap items-center justify-center gap-[var(--space-xl)] px-[var(--space-lg)] py-[var(--space-xl)] md:gap-[var(--space-2xl)]"
-        style={{ maxWidth: "var(--container-prose)" }}
-      >
-        {items.map((item, i) => (
-          <div
-            key={item.label}
-            className={cn(
-              "flex flex-col items-center gap-[var(--space-xs)] text-center",
-              i < items.length - 1 &&
-                "border-r border-[var(--color-border-subtle)] pr-[var(--space-xl)] md:pr-[var(--space-2xl)]"
-            )}
-          >
-            <span style={{ color: "var(--color-accent)" }}>{item.icon}</span>
-            <span className="text-[var(--text-xs)] font-medium uppercase tracking-[var(--tracking-wide)] text-[var(--color-text-muted)]">
-              {item.label}
-            </span>
-            <span className="text-[var(--text-base)] font-semibold text-[var(--color-text)]">
-              {item.value}
-            </span>
-          </div>
-        ))}
+      <div className="relative aspect-[16/9] max-h-[560px] w-full overflow-hidden rounded-[var(--radius-2xl)]">
+        <Image
+          src={recipe.heroImage}
+          alt={recipe.title}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -519,8 +337,8 @@ function JumpToRecipe() {
         className={cn(
           "inline-flex items-center gap-[var(--space-sm)] rounded-[var(--radius-full)]",
           "px-[var(--space-xl)] py-[var(--space-sm)]",
-          "text-[var(--text-sm)] font-semibold text-white",
-          "shadow-[var(--shadow-lg)]",
+          "text-[var(--text-sm)] font-medium text-white",
+          "shadow-[var(--shadow-md)]",
           "transition-transform duration-[var(--transition-fast)]",
           "hover:scale-105 active:scale-95"
         )}

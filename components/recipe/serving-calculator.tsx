@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import type { ServingMultiplier } from "@/lib/types";
 
 const MULTIPLIERS: { value: ServingMultiplier; label: string }[] = [
-  { value: 0.25, label: "¼×" },
   { value: 0.5, label: "½×" },
   { value: 1, label: "1×" },
   { value: 2, label: "2×" },

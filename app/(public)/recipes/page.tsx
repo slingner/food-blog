@@ -54,18 +54,18 @@ export default async function RecipesPage({
       style={{ maxWidth: "var(--container-xl)" }}
     >
       {/* ── Page header ── */}
-      <header className="pb-[var(--space-2xl)] pt-[var(--space-4xl)]">
+      <header className="pb-[var(--space-xl)] pt-[var(--space-4xl)]">
         <h1
-          className="font-display text-[var(--text-5xl)] font-bold leading-[var(--leading-tight)] tracking-[var(--tracking-tight)]"
+          className="font-display text-[var(--text-4xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)]"
           style={{ color: "var(--color-text)" }}
         >
-          All Recipes
+          Recipes
         </h1>
         <p
-          className="mt-[var(--space-sm)] text-[var(--text-lg)] leading-[var(--leading-relaxed)]"
-          style={{ color: "var(--color-text-secondary)" }}
+          className="mt-[var(--space-xs)] text-[var(--text-base)] leading-[var(--leading-relaxed)]"
+          style={{ color: "var(--color-text-muted)" }}
         >
-          Every recipe rigorously tested, every technique explained.
+          A cooking diary of sorts.
         </p>
       </header>
 
@@ -74,11 +74,11 @@ export default async function RecipesPage({
         className="space-y-[var(--space-md)] pb-[var(--space-2xl)]"
         aria-label="Filters"
       >
-        {/* Difficulty pills */}
-        <div className="flex flex-wrap items-center gap-[var(--space-sm)]">
+        {/* Difficulty filters */}
+        <div className="flex flex-wrap items-center gap-[var(--space-md)]">
           <span
-            className="mr-[var(--space-xs)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-wide)]"
-            style={{ color: "var(--color-text-muted)" }}
+            className="text-[var(--text-xs)] font-medium uppercase tracking-[var(--tracking-wide)]"
+            style={{ color: "var(--color-text-faint)" }}
           >
             Difficulty
           </span>
@@ -87,35 +87,43 @@ export default async function RecipesPage({
               key={d}
               href={buildHref({ difficulty: d })}
               className={cn(
-                "inline-flex items-center rounded-[var(--radius-full)] px-[var(--space-md)] py-[var(--space-xs)] text-[var(--text-sm)] font-medium capitalize transition-colors",
+                "text-[var(--text-sm)] capitalize transition-colors pb-[var(--space-xs)]",
                 activeDifficulty === d
-                  ? "bg-[var(--color-accent)] text-white"
-                  : "bg-[var(--color-surface-raised)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]"
+                  ? "font-medium border-b border-[var(--color-accent)]"
+                  : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
               )}
-              style={{ transitionDuration: "var(--transition-fast)" }}
+              style={
+                activeDifficulty === d
+                  ? { color: "var(--color-accent)" }
+                  : undefined
+              }
             >
               {d}
             </Link>
           ))}
         </div>
 
-        {/* Category pills */}
-        <div className="flex flex-wrap items-center gap-[var(--space-sm)]">
+        {/* Category filters */}
+        <div className="flex flex-wrap items-center gap-[var(--space-md)]">
           <span
-            className="mr-[var(--space-xs)] text-[var(--text-sm)] font-medium uppercase tracking-[var(--tracking-wide)]"
-            style={{ color: "var(--color-text-muted)" }}
+            className="text-[var(--text-xs)] font-medium uppercase tracking-[var(--tracking-wide)]"
+            style={{ color: "var(--color-text-faint)" }}
           >
             Category
           </span>
           <Link
             href={buildHref({ category: "all" })}
             className={cn(
-              "inline-flex items-center rounded-[var(--radius-full)] px-[var(--space-md)] py-[var(--space-xs)] text-[var(--text-sm)] font-medium transition-colors",
+              "text-[var(--text-sm)] transition-colors pb-[var(--space-xs)]",
               activeCategory === "all"
-                ? "bg-[var(--color-accent)] text-white"
-                : "bg-[var(--color-surface-raised)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]"
+                ? "font-medium border-b border-[var(--color-accent)]"
+                : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
             )}
-            style={{ transitionDuration: "var(--transition-fast)" }}
+            style={
+              activeCategory === "all"
+                ? { color: "var(--color-accent)" }
+                : undefined
+            }
           >
             All
           </Link>
@@ -124,12 +132,16 @@ export default async function RecipesPage({
               key={cat.slug}
               href={buildHref({ category: cat.slug })}
               className={cn(
-                "inline-flex items-center rounded-[var(--radius-full)] px-[var(--space-md)] py-[var(--space-xs)] text-[var(--text-sm)] font-medium transition-colors",
+                "text-[var(--text-sm)] transition-colors pb-[var(--space-xs)]",
                 activeCategory === cat.slug
-                  ? "bg-[var(--color-accent)] text-white"
-                  : "bg-[var(--color-surface-raised)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]"
+                  ? "font-medium border-b border-[var(--color-accent)]"
+                  : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
               )}
-              style={{ transitionDuration: "var(--transition-fast)" }}
+              style={
+                activeCategory === cat.slug
+                  ? { color: "var(--color-accent)" }
+                  : undefined
+              }
             >
               {cat.name}
             </Link>
@@ -139,15 +151,15 @@ export default async function RecipesPage({
 
       {/* ── Recipe count ── */}
       <p
-        className="pb-[var(--space-lg)] text-[var(--text-sm)] font-medium"
-        style={{ color: "var(--color-text-muted)" }}
+        className="pb-[var(--space-lg)] text-[var(--text-xs)] tracking-[var(--tracking-wide)]"
+        style={{ color: "var(--color-text-faint)" }}
       >
-        Showing {filtered.length} recipe{filtered.length !== 1 ? "s" : ""}
+        {filtered.length} recipe{filtered.length !== 1 ? "s" : ""}
       </p>
 
       {/* ── Recipe grid or empty state ── */}
       {filtered.length > 0 ? (
-        <div className="grid grid-cols-1 gap-[var(--space-xl)] pb-[var(--space-4xl)] sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-[var(--space-2xl)] pb-[var(--space-4xl)] sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
@@ -155,22 +167,21 @@ export default async function RecipesPage({
       ) : (
         <div className="flex flex-col items-center justify-center pb-[var(--space-4xl)] pt-[var(--space-3xl)] text-center">
           <p
-            className="font-display text-[var(--text-2xl)] font-semibold"
+            className="font-display text-[var(--text-2xl)]"
             style={{ color: "var(--color-text)" }}
           >
             No recipes found
           </p>
           <p
             className="mt-[var(--space-sm)] max-w-md text-[var(--text-base)] leading-[var(--leading-relaxed)]"
-            style={{ color: "var(--color-text-secondary)" }}
+            style={{ color: "var(--color-text-muted)" }}
           >
-            Try adjusting your filters. We add new rigorously tested recipes
-            every week.
+            Try adjusting your filters. We add new recipes every week.
           </p>
           <Link
             href="/recipes"
-            className="mt-[var(--space-lg)] inline-flex items-center rounded-[var(--radius-full)] bg-[var(--color-accent)] px-[var(--space-xl)] py-[var(--space-sm)] text-[var(--text-sm)] font-medium text-white transition-colors hover:bg-[var(--color-accent-hover)]"
-            style={{ transitionDuration: "var(--transition-fast)" }}
+            className="mt-[var(--space-lg)] text-[var(--text-sm)] font-medium transition-colors pb-[var(--space-xs)] border-b border-[var(--color-accent)]"
+            style={{ color: "var(--color-accent)" }}
           >
             Clear all filters
           </Link>

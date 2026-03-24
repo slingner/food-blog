@@ -1,9 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { RecipeCard } from "@/components/recipe-card";
-import { NewsletterForm } from "@/components/newsletter-form";
-import { StarRating } from "@/components/star-rating";
-import { Badge } from "@/components/ui/badge";
 import {
   getMockFeaturedRecipes,
   getMockLatestRecipes,
@@ -16,7 +14,6 @@ export default function HomePage() {
   const featured = getMockFeaturedRecipes();
   const latest = getMockLatestRecipes(6);
   const hero = featured[0];
-  const subFeatured = featured.slice(1, 4);
 
   const categoryShowcase = mockCategories[0]?.children?.slice(0, 6) ?? [];
 
@@ -24,229 +21,149 @@ export default function HomePage() {
     <div>
       {/* ─── Hero Section ─── */}
       <section className="relative">
-        <div className="mx-auto max-w-[var(--container-xl)] px-[var(--space-md)] py-[var(--space-xl)] lg:px-[var(--space-xl)] lg:py-[var(--space-3xl)]">
-          <div className="grid gap-[var(--space-lg)] lg:grid-cols-[1.4fr_1fr] lg:gap-[var(--space-xl)]">
-            {/* Main Hero Recipe */}
-            {hero && (
-              <Link
-                href={`/recipes/${hero.slug}`}
-                className="group relative block overflow-hidden rounded-[var(--radius-xl)]"
+        <div className="mx-auto max-w-[var(--container-xl)] px-[var(--space-md)] py-[var(--space-3xl)] lg:px-[var(--space-xl)] lg:py-[var(--space-4xl)]">
+          {hero && (
+            <Link
+              href={`/recipes/${hero.slug}`}
+              className="group block"
+            >
+              <div
+                className="relative aspect-[16/9] lg:aspect-[2.2/1] overflow-hidden"
+                style={{
+                  borderRadius: "var(--radius-xl)",
+                  backgroundColor:
+                    heroPlaceholderColors[hero.id] ?? "var(--color-surface-raised)",
+                }}
               >
-                <div
-                  className="aspect-[4/3] lg:aspect-[16/10]"
-                  style={{
-                    backgroundColor:
-                      heroPlaceholderColors[hero.id] ?? "var(--color-surface-raised)",
-                  }}
-                >
-                  <div className="absolute inset-0 flex items-end">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="relative p-[var(--space-lg)] lg:p-[var(--space-2xl)]">
-                      {hero.category && (
-                        <Badge
-                          variant="secondary"
-                          className="mb-[var(--space-sm)] bg-white/20 text-white backdrop-blur-sm border-white/10"
-                        >
-                          {hero.category.name}
-                        </Badge>
-                      )}
-                      <h1 className="font-display text-[var(--text-3xl)] lg:text-[var(--text-5xl)] font-bold text-white leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] mb-[var(--space-sm)]">
-                        {hero.title}
-                      </h1>
-                      <p className="text-[var(--text-base)] lg:text-[var(--text-lg)] text-white/80 max-w-xl leading-[var(--leading-normal)] line-clamp-2">
-                        {hero.description}
-                      </p>
-                      <div className="mt-[var(--space-md)] flex items-center gap-[var(--space-md)] text-[var(--text-sm)] text-white/70">
-                        {hero.prepTime != null && hero.cookTime != null && (
-                          <span>{formatMinutes(hero.prepTime + hero.cookTime)}</span>
-                        )}
-                        {hero.difficulty && (
-                          <span className="capitalize">{hero.difficulty}</span>
-                        )}
-                        {hero.reviewStats && (
-                          <span className="flex items-center gap-1">
-                            <StarRating
-                              rating={hero.reviewStats.averageRating}
-                            />
-                            <span>({hero.reviewStats.totalReviews})</span>
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-[var(--radius-xl)]" />
-              </Link>
-            )}
-
-            {/* Sub-Featured Stack */}
-            <div className="flex flex-col gap-[var(--space-md)]">
-              {subFeatured.map((recipe) => (
-                <Link
-                  key={recipe.id}
-                  href={`/recipes/${recipe.slug}`}
-                  className="group flex gap-[var(--space-md)] items-start rounded-[var(--radius-lg)] p-[var(--space-sm)] -mx-[var(--space-sm)] transition-colors hover:bg-[var(--color-surface)]"
-                >
-                  <div
-                    className="w-24 h-24 lg:w-28 lg:h-28 shrink-0 rounded-[var(--radius-md)] overflow-hidden"
-                    style={{
-                      backgroundColor:
-                        heroPlaceholderColors[recipe.id] ??
-                        "var(--color-surface-raised)",
-                    }}
+                {hero.heroImage && (
+                  <Image
+                    src={hero.heroImage}
+                    alt={hero.title}
+                    fill
+                    priority
+                    sizes="(max-width: 1280px) 100vw, 1280px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                )}
+              </div>
+              <div className="mt-[var(--space-lg)] lg:mt-[var(--space-xl)]">
+                {hero.category && (
+                  <span
+                    className="text-[11px] font-medium uppercase tracking-[0.12em]"
+                    style={{ color: "var(--color-accent)" }}
                   >
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="font-display text-[var(--text-2xl)] text-white/60 font-bold">
-                        {recipe.title.charAt(0)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0 py-[var(--space-xs)]">
-                    {recipe.category && (
-                      <span
-                        className="text-[var(--text-xs)] font-medium uppercase tracking-[0.08em]"
-                        style={{ color: "var(--color-accent)" }}
-                      >
-                        {recipe.category.name}
-                      </span>
-                    )}
-                    <h3 className="font-display text-[var(--text-lg)] font-semibold leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] line-clamp-2 group-hover:text-[var(--color-accent)] transition-colors">
-                      {recipe.title}
-                    </h3>
-                    <p
-                      className="text-[var(--text-sm)] mt-1 line-clamp-2"
-                      style={{ color: "var(--color-text-muted)" }}
-                    >
-                      {recipe.description}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
+                    {hero.category.name}
+                  </span>
+                )}
+                <h1 className="font-display text-[var(--text-3xl)] lg:text-[var(--text-5xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] mt-[var(--space-xs)] group-hover:text-[var(--color-accent)] transition-colors">
+                  {hero.title}
+                </h1>
+                {hero.description && (
+                  <p
+                    className="mt-[var(--space-sm)] text-[var(--text-base)] lg:text-[var(--text-lg)] max-w-2xl leading-[var(--leading-relaxed)]"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
+                    {hero.description}
+                  </p>
+                )}
+                {hero.prepTime != null && hero.cookTime != null && (
+                  <p
+                    className="text-[var(--text-sm)] mt-[var(--space-sm)]"
+                    style={{ color: "var(--color-text-muted)" }}
+                  >
+                    {formatMinutes(hero.prepTime + hero.cookTime)}
+                  </p>
+                )}
+              </div>
+            </Link>
+          )}
         </div>
       </section>
 
       {/* ─── Latest Recipes ─── */}
-      <section
-        className="py-[var(--space-3xl)]"
-        style={{ borderTop: "1px solid var(--color-border-subtle)" }}
-      >
+      <section className="py-[var(--space-3xl)] lg:py-[var(--space-4xl)]">
         <div className="mx-auto max-w-[var(--container-xl)] px-[var(--space-md)] lg:px-[var(--space-xl)]">
-          <div className="flex items-end justify-between mb-[var(--space-xl)]">
-            <div>
-              <h2 className="font-display text-[var(--text-3xl)] lg:text-[var(--text-4xl)] font-bold tracking-[var(--tracking-tight)]">
-                Latest Recipes
-              </h2>
-              <p
-                className="mt-[var(--space-xs)] text-[var(--text-base)]"
-                style={{ color: "var(--color-text-secondary)" }}
-              >
-                Fresh from the test kitchen
-              </p>
-            </div>
+          {/* Heading with thin decorative line */}
+          <div className="flex items-center gap-[var(--space-lg)] mb-[var(--space-2xl)]">
+            <h2
+              className="font-display text-[var(--text-2xl)] lg:text-[var(--text-3xl)] font-semibold tracking-[var(--tracking-tight)] shrink-0"
+              style={{ color: "var(--color-text)" }}
+            >
+              Latest Recipes
+            </h2>
+            <div
+              className="flex-1 h-px"
+              style={{ backgroundColor: "var(--color-border)" }}
+            />
             <Link
               href="/recipes"
-              className="hidden sm:flex items-center gap-1 text-[var(--text-sm)] font-medium hover:text-[var(--color-accent)] transition-colors"
+              className="hidden sm:flex items-center gap-1 text-[var(--text-sm)] font-medium shrink-0 transition-colors"
+              style={{ color: "var(--color-text-muted)" }}
             >
-              View all recipes
-              <ArrowRight className="w-4 h-4" />
+              View all
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-          <div className="grid gap-[var(--space-lg)] sm:grid-cols-2 lg:grid-cols-3">
+
+          {/* Spacious grid */}
+          <div className="grid gap-x-[var(--space-xl)] gap-y-[var(--space-2xl)] sm:grid-cols-2 lg:grid-cols-3">
             {latest.map((recipe) => (
               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
+
           <div className="mt-[var(--space-xl)] text-center sm:hidden">
             <Link
               href="/recipes"
-              className="inline-flex items-center gap-1 text-[var(--text-sm)] font-medium hover:text-[var(--color-accent)] transition-colors"
+              className="inline-flex items-center gap-1 text-[var(--text-sm)] font-medium transition-colors"
+              style={{ color: "var(--color-text-muted)" }}
             >
               View all recipes
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ─── Category Showcase ─── */}
-      <section
-        className="py-[var(--space-3xl)]"
-        style={{ backgroundColor: "var(--color-surface)" }}
-      >
+      {/* ─── Category Showcase — editorial text links ─── */}
+      <section className="py-[var(--space-3xl)] lg:py-[var(--space-4xl)]">
         <div className="mx-auto max-w-[var(--container-xl)] px-[var(--space-md)] lg:px-[var(--space-xl)]">
-          <div className="text-center mb-[var(--space-2xl)]">
-            <h2 className="font-display text-[var(--text-3xl)] lg:text-[var(--text-4xl)] font-bold tracking-[var(--tracking-tight)]">
-              Explore by Category
-            </h2>
-            <p
-              className="mt-[var(--space-xs)] text-[var(--text-base)]"
-              style={{ color: "var(--color-text-secondary)" }}
+          <div className="text-center">
+            <h2
+              className="font-display text-[var(--text-2xl)] lg:text-[var(--text-3xl)] font-semibold tracking-[var(--tracking-tight)]"
+              style={{ color: "var(--color-text)" }}
             >
-              Find exactly what you&apos;re craving
-            </p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-[var(--space-md)]">
-            {categoryShowcase.map((cat, i) => {
-              const categoryColors = [
-                "#c45d3e",
-                "#d4a853",
-                "#4a7a3d",
-                "#6b4226",
-                "#2d7a4f",
-                "#c47a1a",
-              ];
-              return (
-                <Link
-                  key={cat.id}
-                  href={`/categories/${cat.slug}`}
-                  className="group relative flex flex-col items-center text-center p-[var(--space-lg)] rounded-[var(--radius-xl)] transition-all hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5"
-                  style={{ backgroundColor: "var(--color-bg)" }}
-                >
-                  <div
-                    className="w-16 h-16 rounded-full mb-[var(--space-md)] flex items-center justify-center transition-transform group-hover:scale-110"
-                    style={{ backgroundColor: `${categoryColors[i]}15` }}
-                  >
-                    <span
-                      className="font-display text-[var(--text-2xl)] font-bold"
-                      style={{ color: categoryColors[i] }}
-                    >
-                      {cat.name.charAt(0)}
-                    </span>
-                  </div>
-                  <span className="text-[var(--text-sm)] font-medium leading-snug">
-                    {cat.name}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+              Explore
+            </h2>
+            <div
+              className="mx-auto mt-[var(--space-md)] mb-[var(--space-xl)] h-px w-12"
+              style={{ backgroundColor: "var(--color-border)" }}
+            />
 
-      {/* ─── Newsletter CTA ─── */}
-      <section className="py-[var(--space-4xl)]">
-        <div className="mx-auto max-w-[var(--container-md)] px-[var(--space-md)] text-center">
-          <h2 className="font-display text-[var(--text-3xl)] lg:text-[var(--text-4xl)] font-bold tracking-[var(--tracking-tight)]">
-            Never Miss a Recipe
-          </h2>
-          <p
-            className="mt-[var(--space-sm)] text-[var(--text-lg)] max-w-md mx-auto"
-            style={{ color: "var(--color-text-secondary)" }}
-          >
-            Get our best recipes, techniques, and kitchen tips delivered to your
-            inbox every week.
-          </p>
-          <div className="mt-[var(--space-xl)] max-w-sm mx-auto">
-            <NewsletterForm />
+            {/* Elegant text links separated by dots */}
+            <nav className="flex flex-wrap items-center justify-center gap-y-[var(--space-sm)]">
+              {categoryShowcase.map((cat, i) => (
+                <span key={cat.id} className="inline-flex items-center">
+                  {i > 0 && (
+                    <span
+                      className="mx-[var(--space-md)] text-[var(--text-xs)] select-none"
+                      style={{ color: "var(--color-text-faint)" }}
+                      aria-hidden="true"
+                    >
+                      &middot;
+                    </span>
+                  )}
+                  <Link
+                    href={`/categories/${cat.slug}`}
+                    className="text-[var(--text-sm)] lg:text-[var(--text-base)] font-medium tracking-[0.02em] transition-colors hover:text-[var(--color-accent)]"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
+                    {cat.name}
+                  </Link>
+                </span>
+              ))}
+            </nav>
           </div>
-          <p
-            className="mt-[var(--space-md)] text-[var(--text-xs)]"
-            style={{ color: "var(--color-text-faint)" }}
-          >
-            No spam. Unsubscribe anytime.
-          </p>
         </div>
       </section>
     </div>

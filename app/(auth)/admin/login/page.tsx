@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
             Admin Sign In
           </h1>
           <p className="text-sm text-[var(--admin-text-muted)] mt-1">
-            Food Blog Kitchen
+            The Hungry Milo
           </p>
         </div>
 

@@ -151,4 +151,4 @@ export type ReviewFormData = {
 
 export type UnitSystem = "us" | "metric";
 
-export type ServingMultiplier = 0.25 | 0.5 | 1 | 2 | 3;
+export type ServingMultiplier = 0.5 | 1 | 2 | 3;

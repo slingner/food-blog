@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Share2,
   Link2,
@@ -96,29 +96,30 @@ export function ShareButtons({
     },
   ];
 
-  // Check if native share is available (mobile)
-  const hasNativeShare = typeof navigator !== "undefined" && !!navigator.share;
+  // Check if native share is available (mobile) — defer to avoid hydration mismatch
+  const [hasNativeShare, setHasNativeShare] = useState(false);
+  useEffect(() => {
+    setHasNativeShare(!!navigator.share);
+  }, []);
+
+  const iconBtn = cn(
+    "inline-flex items-center justify-center size-9 rounded-full",
+    "text-[var(--color-text-faint)]",
+    "hover:text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-raised)]",
+    "transition-colors duration-[var(--transition-fast)]"
+  );
 
   return (
-    <div className="flex items-center gap-1.5">
-      {hasNativeShare && (
+    <div className="flex items-center">
+      {hasNativeShare ? (
         <button
           onClick={handleNativeShare}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-2 rounded-xl text-[var(--text-sm)] font-medium",
-            "border border-[var(--color-border)]",
-            "text-[var(--color-text-secondary)]",
-            "hover:bg-[var(--color-surface-raised)]",
-            "transition-all duration-[var(--transition-fast)]"
-          )}
+          className={iconBtn}
           aria-label="Share recipe"
         >
-          <Share2 className="size-4" />
-          <span className="hidden sm:inline">Share</span>
+          <Share2 className="size-[18px]" strokeWidth={1.5} />
         </button>
-      )}
-
-      {!hasNativeShare &&
+      ) : (
         fallbackLinks.map(({ label, icon: Icon, href, onClick, activeClass }) =>
           href ? (
             <a
@@ -126,33 +127,23 @@ export function ShareButtons({
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className={cn(
-                "p-2 rounded-xl",
-                "text-[var(--color-text-muted)]",
-                "hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-secondary)]",
-                "transition-all duration-[var(--transition-fast)]"
-              )}
+              className={cn(iconBtn, activeClass)}
               aria-label={`Share on ${label}`}
             >
-              <Icon className="size-4" />
+              <Icon className="size-[18px]" />
             </a>
           ) : (
             <button
               key={label}
               onClick={onClick}
-              className={cn(
-                "p-2 rounded-xl",
-                "text-[var(--color-text-muted)]",
-                "hover:bg-[var(--color-surface-raised)] hover:text-[var(--color-text-secondary)]",
-                "transition-all duration-[var(--transition-fast)]",
-                activeClass
-              )}
+              className={cn(iconBtn, activeClass)}
               aria-label={label}
             >
-              <Icon className="size-4" />
+              <Icon className="size-[18px]" />
             </button>
           )
-        )}
+        )
+      )}
     </div>
   );
 }

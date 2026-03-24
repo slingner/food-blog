@@ -35,22 +35,22 @@
   --tracking-normal: 0;
   --tracking-wide: 0.02em;
 
-  /* ─── Colors — warm neutral editorial palette ─── */
-  --color-bg: #faf9f7;
-  --color-surface: #ffffff;
-  --color-surface-raised: #f5f3f0;
-  --color-text: #1a1a1a;
-  --color-text-secondary: #4a4a4a;
-  --color-text-muted: #6b6b6b;
-  --color-text-faint: #999999;
-  --color-border: #e5e2dd;
-  --color-border-subtle: #eceae6;
-  --color-accent: #c45d3e;
-  --color-accent-hover: #a94d32;
-  --color-accent-light: #fdf0ec;
-  --color-success: #2d7a4f;
-  --color-warning: #c47a1a;
-  --color-error: #c43e3e;
+  /* ─── Colors — crème brûlée editorial palette ─── */
+  --color-bg: #f6f1eb;
+  --color-surface: #fdf9f5;
+  --color-surface-raised: #efe9e1;
+  --color-text: #2c2420;
+  --color-text-secondary: #5c524a;
+  --color-text-muted: #8a7f76;
+  --color-text-faint: #b5aca4;
+  --color-border: #e2d9cf;
+  --color-border-subtle: #ece5dc;
+  --color-accent: #c2775e;
+  --color-accent-hover: #a8634c;
+  --color-accent-light: #faf0ea;
+  --color-success: #6b9a7d;
+  --color-warning: #c9a96a;
+  --color-error: #c47a6a;
 
   /* ─── Admin dark theme ─── */
   --admin-bg: #09090b;
@@ -72,12 +72,12 @@
   --radius-2xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* ─── Shadows ─── */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  /* ─── Shadows — softer, warmer ─── */
+  --shadow-xs: 0 1px 2px rgba(44, 36, 32, 0.03);
+  --shadow-sm: 0 2px 8px rgba(44, 36, 32, 0.04);
+  --shadow-md: 0 4px 16px rgba(44, 36, 32, 0.05);
+  --shadow-lg: 0 8px 24px rgba(44, 36, 32, 0.06);
+  --shadow-xl: 0 16px 40px rgba(44, 36, 32, 0.08);
 
   /* ─── Transitions ─── */
   --transition-fast: 150ms ease;
@@ -143,20 +143,40 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-size: var(--text-base);
-  line-height: var(--leading-normal);
+  line-height: var(--leading-relaxed);
+  letter-spacing: 0.005em;
 }
 
-/* ─── Focus styles ─── */
+/* ─── Display font utility ─── */
+.font-display {
+  font-family: var(--font-display, "Playfair Display"), Georgia, serif;
+  font-style: normal;
+}
+
+/* ─── Focus styles — soft ring ─── */
 *:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  outline: 1.5px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-md);
 }
 
-/* ─── Selection ─── */
+/* ─── Selection — visible highlight ─── */
 ::selection {
-  background-color: var(--color-accent-light);
-  color: var(--color-text);
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+/* ─── Elegant separator ─── */
+.divider {
+  width: 2rem;
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-xl) auto;
+}
+
+/* ─── Smooth image loading ─── */
+img {
+  transition: opacity 0.3s ease;
 }
 
 /* ─── Print styles ─── */

@@ -21,7 +21,7 @@ export function RecipeJsonLd({ recipe }: { recipe: Recipe }) {
     datePublished: recipe.createdAt.toISOString(),
     author: {
       "@type": "Organization",
-      name: "The Hungry Fork",
+      name: "The Hungry Milo",
     },
     ...(recipe.prepTime && {
       prepTime: minutesToIsoDuration(recipe.prepTime),

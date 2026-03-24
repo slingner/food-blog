@@ -49,7 +49,7 @@ export default async function CategoryPage({
 
   const recipes = getMockRecipesByCategory(slug);
 
-  // Resolve subcategory nav pills: show children if this is a parent,
+  // Resolve subcategory nav: show children if this is a parent,
   // or sibling categories if this is a child.
   const ownChildren = category.children;
   const parentWithSiblings = !ownChildren
@@ -59,47 +59,35 @@ export default async function CategoryPage({
 
   return (
     <main>
-      {/* ── Hero ── */}
+      {/* ── Header — clean, no heavy background ── */}
       <section
-        className="relative overflow-hidden"
-        style={{ backgroundColor: "var(--color-surface-raised)" }}
+        className="mx-auto w-full px-[var(--space-lg)] pb-[var(--space-xl)] pt-[var(--space-4xl)]"
+        style={{ maxWidth: "var(--container-xl)" }}
       >
-        <div
-          className="mx-auto w-full px-[var(--space-lg)] pb-[var(--space-3xl)] pt-[var(--space-4xl)]"
-          style={{ maxWidth: "var(--container-xl)" }}
+        <h1
+          className="font-display text-[var(--text-4xl)] leading-[var(--leading-tight)] tracking-[var(--tracking-tight)]"
+          style={{ color: "var(--color-text)" }}
         >
-          <h1
-            className="font-display text-[var(--text-5xl)] font-bold leading-[var(--leading-tight)] tracking-[var(--tracking-tight)] sm:text-[var(--text-6xl)]"
-            style={{ color: "var(--color-text)" }}
+          {category.name}
+        </h1>
+        {category.description && (
+          <p
+            className="mt-[var(--space-sm)] max-w-xl text-[var(--text-base)] leading-[var(--leading-relaxed)]"
+            style={{ color: "var(--color-text-muted)" }}
           >
-            {category.name}
-          </h1>
-          {category.description && (
-            <p
-              className="mt-[var(--space-md)] max-w-2xl text-[var(--text-lg)] leading-[var(--leading-relaxed)]"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              {category.description}
-            </p>
-          )}
-        </div>
-
-        {/* Decorative bottom edge */}
-        <div
-          className="absolute bottom-0 left-0 h-px w-full"
-          style={{ backgroundColor: "var(--color-border)" }}
-          aria-hidden="true"
-        />
+            {category.description}
+          </p>
+        )}
       </section>
 
-      {/* ── Subcategory navigation ── */}
+      {/* ── Subcategory navigation — delicate text links ── */}
       {navCategories.length > 0 && (
         <nav
-          className="mx-auto w-full px-[var(--space-lg)] pt-[var(--space-xl)]"
+          className="mx-auto w-full px-[var(--space-lg)]"
           style={{ maxWidth: "var(--container-xl)" }}
           aria-label="Subcategories"
         >
-          <div className="flex flex-wrap gap-[var(--space-sm)]">
+          <div className="flex flex-wrap gap-[var(--space-md)]">
             {navCategories.map((sub) => {
               const isActive = sub.slug === slug;
               return (
@@ -107,12 +95,14 @@ export default async function CategoryPage({
                   key={sub.slug}
                   href={`/categories/${sub.slug}`}
                   className={cn(
-                    "inline-flex items-center rounded-[var(--radius-full)] px-[var(--space-md)] py-[var(--space-sm)] text-[var(--text-sm)] font-medium transition-colors",
+                    "text-[var(--text-sm)] transition-colors pb-[var(--space-xs)]",
                     isActive
-                      ? "bg-[var(--color-accent)] text-white"
-                      : "bg-[var(--color-surface)] text-[var(--color-text-secondary)] hover:bg-[var(--color-accent)] hover:text-white"
+                      ? "font-medium border-b border-[var(--color-accent)]"
+                      : "text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
                   )}
-                  style={{ transitionDuration: "var(--transition-fast)" }}
+                  style={
+                    isActive ? { color: "var(--color-accent)" } : undefined
+                  }
                 >
                   {sub.name}
                 </Link>
@@ -130,12 +120,12 @@ export default async function CategoryPage({
         {recipes.length > 0 ? (
           <>
             <p
-              className="pb-[var(--space-lg)] text-[var(--text-sm)] font-medium"
-              style={{ color: "var(--color-text-muted)" }}
+              className="pb-[var(--space-lg)] text-[var(--text-xs)] tracking-[var(--tracking-wide)]"
+              style={{ color: "var(--color-text-faint)" }}
             >
               {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}
             </p>
-            <div className="grid grid-cols-1 gap-[var(--space-xl)] sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-[var(--space-2xl)] sm:grid-cols-2 lg:grid-cols-3">
               {recipes.map((recipe) => (
                 <RecipeCard key={recipe.id} recipe={recipe} />
               ))}
@@ -144,33 +134,30 @@ export default async function CategoryPage({
         ) : (
           <div className="flex flex-col items-center justify-center py-[var(--space-4xl)] text-center">
             <p
-              className="font-display text-[var(--text-2xl)] font-semibold"
+              className="font-display text-[var(--text-2xl)]"
               style={{ color: "var(--color-text)" }}
             >
               No recipes here yet
             </p>
             <p
               className="mt-[var(--space-sm)] max-w-md text-[var(--text-base)] leading-[var(--leading-relaxed)]"
-              style={{ color: "var(--color-text-secondary)" }}
+              style={{ color: "var(--color-text-muted)" }}
             >
-              We&apos;re still perfecting recipes for this category. We never
-              publish until every detail is dialed in — check back soon.
+              We&apos;re still perfecting recipes for this category.
+              Check back soon.
             </p>
           </div>
         )}
       </section>
 
-      {/* ── Newsletter CTA ── */}
+      {/* temporarily hidden
       <section
         className="mx-auto px-[var(--space-lg)] pb-[var(--space-4xl)]"
         style={{ maxWidth: "var(--container-prose)" }}
       >
-        <div
-          className="rounded-[var(--radius-xl)] px-[var(--space-2xl)] py-[var(--space-3xl)] text-center"
-          style={{ backgroundColor: "var(--color-surface-raised)" }}
-        >
+        <div className="text-center">
           <h2
-            className="font-display text-[var(--text-2xl)] font-bold leading-[var(--leading-tight)]"
+            className="font-display text-[var(--text-2xl)] leading-[var(--leading-tight)]"
             style={{ color: "var(--color-text)" }}
           >
             Never miss a recipe
@@ -187,6 +174,7 @@ export default async function CategoryPage({
           </div>
         </div>
       </section>
+      */}
     </main>
   );
 }

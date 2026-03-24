@@ -14,11 +14,11 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "The Hungry Fork",
-    template: "%s | The Hungry Fork",
+    default: "The Hungry Milo",
+    template: "%s | The Hungry Milo",
   },
   description:
-    "Recipes, techniques, and the joy of cooking — from our kitchen to yours.",
+    "A cooking diary of sorts. Recipes from Tammy and Milo in San Francisco.",
 };
 
 export default function RootLayout({
