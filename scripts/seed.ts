@@ -1,7 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "../lib/db/schema";
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 async function seed() {
   const sql = neon(process.env.DATABASE_URL!);
