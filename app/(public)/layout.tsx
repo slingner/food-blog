@@ -1,3 +1,6 @@
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+
 export default function PublicLayout({
   children,
 }: {
@@ -5,9 +8,9 @@ export default function PublicLayout({
 }) {
   return (
     <>
-      {/* SiteHeader will be built by Stream B */}
+      <SiteHeader />
       <main className="min-h-screen">{children}</main>
-      {/* Footer will be built by Stream B */}
+      <SiteFooter />
     </>
   );
 }
